@@ -12,23 +12,42 @@ var todos = [{
   done: false
 }];
 
+var Title = React.createClass({
+  render: function() {
+    var title = this.props.done ? 'Done tasks' : 'Todo tasks';
+    return (<h2>{title}</h2>);
+  }
+});
+
+var CompleteButton = React.createClass({
+  render: function() {
+    return (<button className="btn btn-default btn-xs">Done <span className="glyphicon glyphicon-ok" aria-hidden="true"></span></button>);
+  }
+});
+
 var Todo = React.createClass({
   render: function() {
     var todo = this.props.todo;
-    return (<li className="list-group-item">{todo.name} <button className="btn btn-default btn-xs">Done <span className="glyphicon glyphicon-ok" aria-hidden="true"></span></button></li>);
+    if (todo.done) {
+      return (<li className="list-group-item">{todo.name}</li>);
+    } else {
+      return (<li className="list-group-item">{todo.name}<CompleteButton /></li>);
+    }
   }
 });
 
 var TodoList = React.createClass({
   render: function() {
-    var rows = this.props.todos.filter(function(todo) {
-      return !todo.done;
+    var
+    done = this.props.done,
+    rows = this.props.todos.filter(function(todo) {
+      return done == todo.done;
     }).map(function(todo) {
       return (<Todo key={todo.id} todo={todo}></Todo>);
     });
     return (
       <div className="active-todos">
-        <h2>Todo tasks</h2>
+        <Title done={done}/>
         <ul className="list-group">{rows}</ul>
       </div>
     );
@@ -40,7 +59,8 @@ var App = React.createClass({
     return (
       <div className="container">
         <h1>My Todo</h1>
-        <TodoList todos={todos}/>
+        <TodoList done={false} todos={todos}/>
+        <TodoList done={true} todos={todos}/>
       </div>
     );
   }
