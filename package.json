@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server .",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
@@ -13,6 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "http-server": "^0.8.0"
+    "browserify": "^9.0.7",
+    "gulp": "^3.8.11",
+    "http-server": "^0.8.0",
+    "object-assign": "^2.0.0",
+    "react": "^0.13.1",
+    "reactify": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

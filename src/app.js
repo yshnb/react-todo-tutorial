@@ -1,3 +1,5 @@
+var React = require('react/addons');
+
 var todos = [{
   id: '_1',
   name: 'eat a pizza!',
