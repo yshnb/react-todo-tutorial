@@ -1,18 +1,5 @@
 var React = require('react/addons');
-
-var todos = [{
-  id: '_1',
-  name: 'eat a pizza!',
-  done: true 
-}, {
-  id: '_2',
-  name: 'develop new wheel',
-  done: false
-}, {
-  id: '_3',
-  name: 'discuss bikeshed',
-  done: false
-}];
+var TodoStorage = require('./storage');
 
 var Title = React.createClass({
   render: function() {
@@ -22,8 +9,11 @@ var Title = React.createClass({
 });
 
 var CompleteButton = React.createClass({
-  render: function() {
-    return (<button className="btn btn-default btn-xs">Done <span className="glyphicon glyphicon-ok" aria-hidden="true"></span></button>);
+  handleClick: function() {
+    TodoStorage.complete(this.props.todo.id);
+  },
+  render: function(todo) {
+    return (<button className="btn btn-default btn-xs" onClick={this.handleClick}>Done <span className="glyphicon glyphicon-ok" aria-hidden="true"></span></button>);
   }
 });
 
@@ -33,7 +23,7 @@ var Todo = React.createClass({
     if (todo.done) {
       return (<li className="list-group-item">{todo.name}</li>);
     } else {
-      return (<li className="list-group-item">{todo.name}<CompleteButton /></li>);
+      return (<li className="list-group-item">{todo.name}<CompleteButton todo={todo}/></li>);
     }
   }
 });
@@ -43,7 +33,7 @@ var TodoList = React.createClass({
     var
     done = this.props.done,
     rows = this.props.todos.filter(function(todo) {
-      return done == todo.done;
+      return done ? todo.done : !todo.done;
     }).map(function(todo) {
       return (<Todo key={todo.id} todo={todo}></Todo>);
     });
@@ -57,12 +47,28 @@ var TodoList = React.createClass({
 });
 
 var App = React.createClass({
+  getInitialState: function() {
+    return {
+      todos: []
+    };
+  },
+  componentDidMount: function() {
+    var setTodoState = function(){
+      TodoStorage.getAll(function(todos) {
+        this.setState({
+          todos: todos
+        });
+      }.bind(this));
+    }.bind(this);
+    TodoStorage.on('change', setTodoState);
+    setTodoState();
+  },
   render: function() {
     return (
       <div className="container">
         <h1>My Todo</h1>
-        <TodoList done={false} todos={todos}/>
-        <TodoList done={true} todos={todos}/>
+        <TodoList done={false} todos={this.state.todos}/>
+        <TodoList done={true} todos={this.state.todos}/>
       </div>
     );
   }
