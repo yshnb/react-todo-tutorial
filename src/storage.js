@@ -37,6 +37,15 @@ var TodoStorage = assign({}, EventEmitter.prototype, {
         break;
       }
     }
+  },
+  create: function(name, callback) {
+    var newTodo = {
+      id: generateId(),
+      name: name
+    };
+    todos = React.addons.update(todos, {$push: [newTodo]});
+    this.emit('change');
+    callback();
   }
 });
 

@@ -46,6 +46,54 @@ var TodoList = React.createClass({
   }
 });
 
+var TodoForm = React.createClass({
+  getInitialState: function() {
+    return {
+      name: ''
+    };
+  },
+  handleNameChange: function(e) {
+    this.setState({
+      name: e.target.value
+    });
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var name = this.state.name.trim();
+    TodoStorage.create(name, function(error) {
+      if (!error) {
+        this.setState({
+          name: ''
+        });
+      }
+    }.bind(this));
+  },
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return this.state.name !== nextState.name;
+  },
+  render: function() {
+    var disabled = this.state.name.trim().length <= 0;
+    return (
+      <div className="row">
+        <div className="col-md-12">
+          <form className="form-horizontal" onSubmit={this.handleSubmit}>
+            <div className="form-group">
+              <div className="col-md-10">
+                <input type="text" className="form-control" value={this.state.name} placeholder="What needs to be done?" onChange={this.handleNameChange}></input>
+              </div>
+            </div>
+            <div className="form-group">
+              <div className="col-md-10">
+                <input type="submit" value="Add" className="btn btn-primary" disabled={disabled}></input>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+});
+
 var App = React.createClass({
   getInitialState: function() {
     return {
@@ -67,6 +115,7 @@ var App = React.createClass({
     return (
       <div className="container">
         <h1>My Todo</h1>
+        <TodoForm/>
         <TodoList done={false} todos={this.state.todos}/>
         <TodoList done={true} todos={this.state.todos}/>
       </div>
